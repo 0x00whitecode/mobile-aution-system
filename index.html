@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to the Auction</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md px-6 py-4 flex justify-between items-center border-b">
+        <h1 class="text-2xl font-bold text-blue-600">Auction Platform</h1>
+        <div class="flex items-center space-x-4">
+            <a href="/signup.html" class="text-blue-600 hover:text-blue-800">Sign Up</a>
+            <a href="/signin.html" class="text-blue-600 hover:text-blue-800">Sign In</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero bg-blue-600 text-white text-center py-24 px-6">
+        <h2 class="text-4xl font-bold mb-4">Welcome to the Online Auction</h2>
+        <p class="text-xl mb-6">Bid on exciting items, sell your products, and get the best deals.</p>
+        <a href="/public.html"
+            class="bg-white text-blue-600 px-8 py-3 rounded-full text-xl font-semibold hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+            Join Now
+        </a>
+    </section>
+
+    <!-- About Section -->
+    <section class="about py-16 px-6 bg-white">
+        <div class="max-w-7xl mx-auto text-center">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">About Our Auction</h2>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto mb-6">
+                Our auction platform connects buyers and sellers in a seamless and secure way. Whether you're looking to bid
+                on rare items, sell your products, or simply participate in a vibrant community of auction lovers, our platform
+                is the perfect place to be.
+            </p>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto mb-6">
+                We ensure fair bidding processes, transparency, and excellent customer support throughout your auction experience.
+            </p>
+        </div>
+    </section>
+
+    <!-- Featured Auctions Section -->
+    <section class="featured-auctions py-16 px-6 bg-gray-100">
+        <div class="max-w-7xl mx-auto text-center">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Featured Auctions</h2>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto mb-6">Check out some of the exciting items currently up for auction.</p>
+
+            <!-- Example Auction Items -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="auction-item bg-white p-6 rounded-lg shadow-lg">
+                    <img src="https://images.pexels.com/photos/21918359/pexels-photo-21918359/free-photo-of-antique-decoration-on-table.jpeg?auto=compress&cs=tinysrgb&w=600 alt="Auction Item 1" class="w-full h-48 object-cover mb-4 rounded-lg">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Vintage Watch</h3>
+                    <p class="text-gray-600 mb-4">Starting bid: ₦50,000</p>
+                    <a href="#" class="text-blue-600 hover:text-blue-800">Place Bid</a>
+                </div>
+                <div class="auction-item bg-white p-6 rounded-lg shadow-lg">
+                    <img src="https://images.pexels.com/photos/7813981/pexels-photo-7813981.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Auction Item 2" class="w-full h-48 object-cover mb-4 rounded-lg">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Antique Painting</h3>
+                    <p class="text-gray-600 mb-4">Starting bid: ₦100,000</p>
+                    <a href="#" class="text-blue-600 hover:text-blue-800">Place Bid</a>
+                </div>
+                <div class="auction-item bg-white p-6 rounded-lg shadow-lg">
+                    <img src="https://media.istockphoto.com/id/917901978/photo/gavel-on-auction-word.jpg?b=1&s=612x612&w=0&k=20&c=RHgX8PpaaYpOviP5d1DZovpgqu6FXiVgmlhZRRFA24M=" alt="Auction Item 3" class="w-full h-48 object-cover mb-4 rounded-lg">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Designer Handbag</h3>
+                    <p class="text-gray-600 mb-4">Starting bid: ₦150,000</p>
+                    <a href="#" class="text-blue-600 hover:text-blue-800">Place Bid</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-blue-600 text-white py-6 text-center">
+        <p>&copy; 2024 Auction Platform. All Rights Reserved.</p>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auction Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-50 font-sans h-full flex flex-col">
+
+  <!-- Navbar -->
+  <nav class="bg-white shadow-md px-6 py-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-blue-600">Auction Dashboard</h1>
+    <div class="flex items-center space-x-4">
+      <span id="user-name" class="text-gray-700 font-medium"></span>
+      <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400" onclick="renderSection('logout')">Logout</button>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col md:flex-row">
+    <!-- Sidebar -->
+    <aside class="w-full md:w-1/4 bg-white shadow-lg rounded-lg p-6 overflow-x-auto">
+      <ul class="space-y-4">
+        <li><a href="#" class="text-gray-700 font-medium hover:text-blue-600 flex items-center" onclick="renderSection('dashboard')">🏠 <span class="ml-2">Dashboard</span></a></li>
+        <li><a href="#" class="text-gray-700 font-medium hover:text-blue-600 flex items-center" onclick="renderSection('createBid')">➕ <span class="ml-2">Create Bid</span></a></li>
+        <li><a href="#" class="text-gray-700 font-medium hover:text-blue-600 flex items-center" onclick="renderSection('viewBids')">📜 <span class="ml-2">View Bids</span></a></li>
+        <li><a href="#" class="text-gray-700 font-medium hover:text-blue-600 flex items-center" onclick="renderSection('profile')">👤 <span class="ml-2">Profile</span></a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Panel -->
+    <main class="flex-1 bg-white shadow-lg rounded-lg p-6">
+      <div id="dashboard-section" class="section">
+        <h2 class="text-xl font-bold text-gray-800">Welcome to Your Auction Dashboard</h2>
+        <p class="text-gray-600 mt-2">Manage your bids and view auction statistics with ease.</p>
+        
+        <!-- Dashboard Stats -->
+        <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="p-4 bg-blue-100 rounded-lg shadow-lg">
+            <h4 class="text-xl font-semibold text-gray-800">Total Bids Created</h4>
+            <p id="total-bids" class="text-lg text-gray-600 mt-2">0</p>
+          </div>
+          <div class="p-4 bg-green-100 rounded-lg shadow-lg">
+            <h4 class="text-xl font-semibold text-gray-800">Bids Placed</h4>
+            <p id="bids-placed" class="text-lg text-gray-600 mt-2">0</p>
+          </div>
+          <div class="p-4 bg-yellow-100 rounded-lg shadow-lg">
+            <h4 class="text-xl font-semibold text-gray-800">Active Bids</h4>
+            <p id="active-bids" class="text-lg text-gray-600 mt-2">0</p>
+          </div>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="bg-white p-6 rounded-lg shadow-lg">
+            <h3 class="text-lg font-semibold text-gray-800">Bids by Days</h3>
+            <canvas id="bidsByDaysChart" height="200"></canvas>
+          </div>
+          <div class="bg-white p-6 rounded-lg shadow-lg">
+            <h3 class="text-lg font-semibold text-gray-800">Bid Participation History</h3>
+            <canvas id="bidParticipationChart" height="200"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div id="createBid-section" class="section hidden">
+        <h3 class="text-lg font-semibold text-gray-800">Create a New Bid</h3>
+        <form id="create-bid-form" class="mt-4 space-y-4">
+          <div>
+            <label for="item-name" class="block text-gray-600">Item Name</label>
+            <input id="item-name" type="text" class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Enter item name" required>
+          </div>
+          <div>
+            <label for="starting-bid" class="block text-gray-600">Starting Bid</label>
+            <input id="starting-bid" type="number" class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Enter starting bid" required>
+          </div>
+          <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:ring-2 focus:ring-blue-400">Create Bid</button>
+        </form>
+      </div>
+
+      <div id="viewBids-section" class="section hidden">
+        <h3 class="text-lg font-semibold text-gray-800">View Active Bids</h3>
+        <div id="bids-container" class="mt-4 space-y-4">
+          <!-- Bids will be dynamically loaded here -->
+        </div>
+      </div>
+
+      <div id="profile-section" class="section hidden">
+        <h3 class="text-lg font-semibold text-gray-800">Profile</h3>
+        <p class="text-gray-600 mt-2">User details and settings go here.</p>
+        <div class="mt-4 space-y-4">
+          <div>
+            <label for="email" class="block text-gray-600">Email</label>
+            <input id="email" type="email" class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Enter your email" required>
+          </div>
+          <div>
+            <label for="phone" class="block text-gray-600">Phone Number</label>
+            <input id="phone" type="text" class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Enter your phone number" required>
+          </div>
+          <div>
+            <label for="address" class="block text-gray-600">Address</label>
+            <textarea id="address" class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Enter your address" required></textarea>
+          </div>
+          <button onclick="updateProfile()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:ring-2 focus:ring-blue-400">Save Profile</button>
+        </div>
+      </div>
+
+      <div id="logout-section" class="section hidden">
+        <h3 class="text-lg font-semibold text-red-600">Logout</h3>
+        <p class="text-gray-600 mt-2">You have been logged out successfully.</p>
+      </div>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-white shadow-md px-6 py-4 mt-8 text-center">
+    <p class="text-gray-600">&copy; 2024 Auction System. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // JavaScript functionality
+    function renderSection(sectionId) {
+      const sections = document.querySelectorAll('.section');
+      sections.forEach(section => section.classList.add('hidden'));
+
+      const activeSection = document.getElementById(`${sectionId}-section`);
+      if (activeSection) {
+        activeSection.classList.remove('hidden');
+      }
+    }
+
+    function loadUserDetails() {
+      const user = JSON.parse(localStorage.getItem('userDetails')) || { name: 'Guest' };
+      document.getElementById('user-name').textContent = `Hello, ${user.name}`;
+    }
+
+    function updateDashboardStats() {
+      const bids = JSON.parse(localStorage.getItem('bids')) || [];
+      const totalBids = bids.length;
+      const activeBids = bids.filter(bid => bid.status === 'active').length;
+      const placedBids = bids.filter(bid => bid.status === 'placed').length;
+
+      document.getElementById('total-bids').textContent = totalBids;
+      document.getElementById('active-bids').textContent = activeBids;
+      document.getElementById('bids-placed').textContent = placedBids;
+    }
+
+    function setupCharts() {
+      const ctx1 = document.getElementById('bidsByDaysChart').getContext('2d');
+      const bidsByDaysChart = new Chart(ctx1, {
+        type: 'bar',
+        data: {
+          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          datasets: [{
+            label: 'Bids by Day',
+            data: [12, 19, 7, 5, 14, 18, 2],
+            backgroundColor: 'rgba(59, 130, 246, 0.5)',
+            borderColor: 'rgba(59, 130, 246, 1)',
+            borderWidth: 1
+          }]
+        }
+      });
+
+      const ctx2 = document.getElementById('bidParticipationChart').getContext('2d');
+      const bidParticipationChart = new Chart(ctx2, {
+        type: 'line',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+          datasets: [{
+            label: 'Bid Participation History',
+            data: [1, 2, 3, 4, 5, 6],
+            borderColor: 'rgba(34, 197, 94, 1)',
+            fill: false,
+            tension: 0.1
+          }]
+        }
+      });
+    }
+
+    // Initialize
+    loadUserDetails();
+    updateDashboardStats();
+    setupCharts();
+  </script>
+</body>
+</html>
