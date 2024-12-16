@@ -8,6 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-gray-50 font-sans h-full flex flex-col">
+    
 
   <!-- Navbar -->
   <nav class="bg-white shadow-md px-6 py-4 flex justify-between items-center">
@@ -19,9 +20,9 @@
   </nav>
 
   <!-- Main Content -->
-  <div class="flex-1 flex flex-col md:flex-row">
+  <div class="flex-1 flex">
     <!-- Sidebar -->
-    <aside class="w-full md:w-1/4 bg-white shadow-lg rounded-lg p-6 overflow-x-auto">
+    <aside class="w-full md:w-1/4 bg-white shadow-lg rounded-lg p-6">
       <ul class="space-y-4">
         <li><a href="#" class="text-gray-700 font-medium hover:text-blue-600 flex items-center" onclick="renderSection('dashboard')">🏠 <span class="ml-2">Dashboard</span></a></li>
         <li><a href="#" class="text-gray-700 font-medium hover:text-blue-600 flex items-center" onclick="renderSection('createBid')">➕ <span class="ml-2">Create Bid</span></a></li>
@@ -37,7 +38,8 @@
         <p class="text-gray-600 mt-2">Manage your bids and view auction statistics with ease.</p>
         
         <!-- Dashboard Stats -->
-        <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+   
+            <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <div class="p-4 bg-blue-100 rounded-lg shadow-lg">
             <h4 class="text-xl font-semibold text-gray-800">Total Bids Created</h4>
             <p id="total-bids" class="text-lg text-gray-600 mt-2">0</p>
@@ -120,7 +122,6 @@
   </footer>
 
   <script>
-    // JavaScript functionality
     function renderSection(sectionId) {
       const sections = document.querySelectorAll('.section');
       sections.forEach(section => section.classList.add('hidden'));
@@ -133,7 +134,7 @@
 
     function loadUserDetails() {
       const user = JSON.parse(localStorage.getItem('userDetails')) || { name: 'Guest' };
-      document.getElementById('user-name').textContent = `Hello, ${user.name}`;
+      document.getElementById('user-name').textContent = `Hello, ${userDetails.email}`;
     }
 
     function updateDashboardStats() {
@@ -145,44 +146,107 @@
       document.getElementById('total-bids').textContent = totalBids;
       document.getElementById('active-bids').textContent = activeBids;
       document.getElementById('bids-placed').textContent = placedBids;
+
+      updateCharts(bids);
     }
 
-    function setupCharts() {
-      const ctx1 = document.getElementById('bidsByDaysChart').getContext('2d');
-      const bidsByDaysChart = new Chart(ctx1, {
-        type: 'bar',
-        data: {
-          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-          datasets: [{
-            label: 'Bids by Day',
-            data: [12, 19, 7, 5, 14, 18, 2],
-            backgroundColor: 'rgba(59, 130, 246, 0.5)',
-            borderColor: 'rgba(59, 130, 246, 1)',
-            borderWidth: 1
-          }]
+    function updateCharts(bids) {
+      const bidsByDays = {};
+      const participationHistory = {};
+
+      bids.forEach(bid => {
+        const bidDate = new Date(bid.createdAt).toLocaleDateString();
+        bidsByDays[bidDate] = (bidsByDays[bidDate] || 0) + 1;
+
+        if (bid.status === 'placed') {
+          participationHistory[bidDate] = (participationHistory[bidDate] || 0) + 1;
         }
       });
 
-      const ctx2 = document.getElementById('bidParticipationChart').getContext('2d');
-      const bidParticipationChart = new Chart(ctx2, {
+      const daysLabels = Object.keys(bidsByDays);
+      const bidsData = Object.values(bidsByDays);
+      const participationData = Object.values(participationHistory);
+
+      // Bids by Days Chart
+      const ctx1 = document.getElementById('bidsByDaysChart').getContext('2d');
+      new Chart(ctx1, {
         type: 'line',
         data: {
-          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+          labels: daysLabels,
           datasets: [{
-            label: 'Bid Participation History',
-            data: [1, 2, 3, 4, 5, 6],
-            borderColor: 'rgba(34, 197, 94, 1)',
+            label: 'Bids Created',
+            data: bidsData,
+            borderColor: '#4CAF50',
             fill: false,
             tension: 0.1
           }]
         }
       });
+
+      // Bid Participation History Chart
+      const ctx2 = document.getElementById('bidParticipationChart').getContext('2d');
+      new Chart(ctx2, {
+        type: 'bar',
+        data: {
+          labels: daysLabels,
+          datasets: [{
+            label: 'Bids Placed',
+            data: participationData,
+            backgroundColor: '#FF9800'
+          }]
+        }
+      });
     }
 
-    // Initialize
+    document.getElementById('create-bid-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const itemName = document.getElementById('item-name').value;
+      const startingBid = document.getElementById('starting-bid').value;
+      const createdAt = new Date().toISOString();
+      const bids = JSON.parse(localStorage.getItem('bids')) || [];
+      bids.push({ itemName, startingBid, status: 'active', createdAt });
+      localStorage.setItem('bids', JSON.stringify(bids));
+      alert('Bid created successfully!');
+      renderSection('viewBids');
+      loadBids();
+      updateDashboardStats();
+    });
+
+    function loadBids() {
+      const bids = JSON.parse(localStorage.getItem('bids')) || [];
+      const bidsContainer = document.getElementById('bids-container');
+      bidsContainer.innerHTML = '';
+      bids.forEach((bid, index) => {
+        const bidElement = document.createElement('div');
+        bidElement.classList.add('p-4', 'border', 'border-gray-300', 'rounded', 'flex', 'justify-between', 'items-center');
+        bidElement.innerHTML = `
+          <div>
+            <h4 class="text-gray-800 font-medium">${bid.itemName}</h4>
+            <p class="text-gray-600">Starting Bid: $${bid.startingBid}</p>
+          </div>
+          <button class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:ring-2 focus:ring-green-400" onclick="placeBid(${index})">Place Bid</button>
+        `;
+        bidsContainer.appendChild(bidElement);
+      });
+    }
+
+    function placeBid(index) {
+      const bids = JSON.parse(localStorage.getItem('bids'));
+      const bid = bids[index];
+      const userBid = prompt(`Enter your bid for ${bid.itemName} (starting at $${bid.startingBid}):`);
+      if (userBid && parseFloat(userBid) > parseFloat(bid.startingBid)) {
+        bid.status = 'placed';
+        localStorage.setItem('bids', JSON.stringify(bids));
+        alert(`Bid placed successfully for $${userBid}!`);
+        updateDashboardStats();
+      } else {
+        alert('Invalid bid. Please try again.');
+      }
+    }
+
     loadUserDetails();
+    loadBids();
     updateDashboardStats();
-    setupCharts();
   </script>
 </body>
 </html>
